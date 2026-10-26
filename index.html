@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>МандроКоза — маршрути для цікавих подорожей</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1e32;--navy2:#142e48;--cream:#f7f5ef;--white:#fff;--teal:#4ed8c7;--blue:#557cf6;--muted:#8294a7;--gold:#ffc96b;--line:#e7eaf0}
+*{box-sizing:border-box}body{margin:0;background:#edf1f4;color:var(--navy);font-family:Manrope,system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer;border:0}
+.app{max-width:1440px;min-height:100vh;margin:auto;display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--cream);box-shadow:0 12px 50px #142e481c}
+.sidebar{background:var(--navy);color:white;padding:25px 16px;display:flex;flex-direction:column;gap:25px}.brand{display:flex;align-items:center;gap:11px;padding:0 8px}.goat{height:42px;width:42px;border-radius:14px;background:var(--teal);display:grid;place-items:center;font-size:25px}.brand b{font-size:18px;letter-spacing:-.5px}.brand small{display:block;color:#9fb5c8;font-size:10px;margin-top:2px}.nav{display:grid;gap:7px}.nav button{color:#c5d1dd;background:transparent;text-align:left;padding:12px 13px;border-radius:13px;font-weight:700;font-size:13px}.nav button.active,.nav button:hover{background:#1d3b58;color:#fff}.nav .navicon{display:inline-grid;width:25px;color:var(--teal);font-size:16px}.sidebar-note{margin-top:auto;background:#142e48;border:1px solid #29435c;border-radius:17px;padding:15px;font-size:12px;line-height:1.5;color:#c5d1dd}.sidebar-note strong{display:block;color:white;margin-bottom:6px}.profile-mini{display:flex;align-items:center;gap:10px;padding:12px 8px 0;border-top:1px solid #294056}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e8f7f4;font-size:24px}.profile-mini small{display:block;color:#9fb5c8;font-size:10px}
+main{padding:28px 30px;min-width:0}.topline{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}.eyebrow{font-size:11px;color:#5b8c91;text-transform:uppercase;letter-spacing:1.6px;font-weight:800}.topline h1{font-size:28px;letter-spacing:-1px;margin:5px 0 0}.top-actions{display:flex;gap:9px}.ghost,.primary{padding:11px 15px;border-radius:12px;font-size:12px;font-weight:800}.ghost{background:white;color:var(--navy);border:1px solid var(--line)}.primary{background:var(--blue);color:white;box-shadow:0 7px 16px #557cf633}.searchrow{display:flex;gap:10px;margin-bottom:15px}.search{flex:1;display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:14px;padding:0 15px;min-width:0}.search input{width:100%;border:0;outline:0;padding:14px 0;color:var(--navy);background:transparent;font-size:13px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:17px}.filter{background:white;border:1px solid var(--line);color:#5d6e80;padding:9px 13px;border-radius:99px;font-size:11px;font-weight:800}.filter.active{background:var(--navy);color:white;border-color:var(--navy)}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.85fr);gap:17px;align-items:stretch}.map-card{position:relative;min-height:500px;background:#d8e7df;border-radius:20px;overflow:hidden;border:1px solid #dfe6e7}.map-top{position:absolute;top:14px;left:14px;right:14px;z-index:500;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.map-pill{background:#fff;padding:10px 13px;border-radius:12px;box-shadow:0 3px 12px #0b1e3214;font-size:11px;font-weight:800;pointer-events:auto}.map-pill span{color:#6483ef}.map-legend{position:absolute;z-index:500;bottom:14px;left:14px;background:#fff;padding:11px 13px;border-radius:12px;box-shadow:0 3px 12px #0b1e3214;font-size:10px;color:#617184;line-height:1.8}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:5px}.sidepanel{display:flex;flex-direction:column;gap:14px}.card{background:white;border:1px solid var(--line);border-radius:19px;padding:17px}.cardhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.cardhead h2{font-size:15px;margin:0;letter-spacing:-.4px}.tag{font-size:9px;font-weight:800;background:#e6fbf6;color:#187f76;padding:6px 8px;border-radius:99px}.routeintro{background:var(--navy);color:white;border-radius:19px;padding:18px;position:relative;overflow:hidden}.routeintro:after{content:"🐐";position:absolute;font-size:68px;right:8px;bottom:-5px;opacity:.15}.routeintro small{color:var(--teal);font-weight:800;letter-spacing:1px;font-size:9px}.routeintro h2{margin:8px 0 5px;font-size:19px}.routeintro p{margin:0;color:#b9c8d5;font-size:11px;max-width:220px;line-height:1.6}.route-meta{display:flex;gap:13px;color:#d8e5ef;font-size:10px;margin-top:13px}.place-list{display:grid;gap:9px}.place{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:10px;padding:8px;border:1px solid #edf0f3;border-radius:13px;cursor:pointer;transition:.18s}.place:hover{border-color:#b8c9ff;transform:translateY(-1px)}.place-art{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#d8ece8,#f9e6c3)}.place h3{font-size:11px;margin:0 0 4px}.place p{font-size:9px;color:#8391a1;margin:0;line-height:1.4}.place .time{font-size:9px;color:#557cf6;font-weight:800;white-space:nowrap}.route-footer{display:flex;gap:8px;margin-top:13px}.route-footer button{flex:1}.bottom-hint{display:flex;align-items:center;gap:9px;background:#e6fbf6;color:#287d75;border-radius:12px;padding:11px 13px;font-size:10px;line-height:1.4}
+#map{height:100%;min-height:500px;width:100%;z-index:1}.leaflet-container{font-family:Manrope, sans-serif}.custom-pin{background:var(--blue);border:3px solid white;border-radius:50%;width:29px;height:29px;color:white;font-size:11px;font-weight:800;display:grid;place-items:center;box-shadow:0 3px 10px #0b1e3240}.leaflet-popup-content-wrapper{border-radius:12px}.leaflet-popup-content{font-family:Manrope,sans-serif;font-size:12px}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:12px 18px;border-radius:12px;font-size:12px;box-shadow:0 10px 35px #0003;z-index:9999;display:none}.memes{display:none}.memes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.meme{background:white;border:1px solid var(--line);border-radius:17px;padding:14px;min-height:150px}.meme .emoji{font-size:40px}.meme b{display:block;font-size:12px;margin:8px 0 5px}.meme p{font-size:10px;color:#8290a0;margin:0;line-height:1.5}.feedback{display:flex;gap:10px;flex-wrap:wrap}.feedback select,.feedback input{border:1px solid var(--line);border-radius:11px;padding:11px;background:white;color:var(--navy)}.feedback input{flex:1;min-width:160px}.hidden{display:none!important}
+@media(max-width:1000px){.app{grid-template-columns:75px minmax(0,1fr)}.sidebar{padding:20px 9px;align-items:center}.brand{padding:0}.brand .brandtext,.nav .label,.sidebar-note,.profile-mini .profiletext{display:none}.nav{width:100%}.nav button{text-align:center;padding:12px 4px;font-size:17px}.nav .navicon{width:auto}.profile-mini{justify-content:center;width:100%}main{padding:22px 18px}.content-grid{grid-template-columns:1fr}.map-card,#map{min-height:390px}.sidepanel{display:grid;grid-template-columns:1fr 1fr}.routeintro{grid-column:1/-1}}
+@media(max-width:620px){.app{display:block}.sidebar{position:sticky;top:0;z-index:1000;flex-direction:row;padding:10px 12px;justify-content:space-between}.brand .brandtext{display:block}.brand b{font-size:14px}.brand small{display:none}.sidebar .nav{display:flex;width:auto;gap:2px}.nav button{padding:8px 9px;font-size:15px}.nav .label{display:none}.sidebar-note,.profile-mini{display:none}main{padding:19px 13px}.topline h1{font-size:23px}.top-actions .ghost{display:none}.content-grid{display:block}.sidepanel{display:flex;margin-top:13px}.map-card,#map{min-height:360px}.memes-grid{grid-template-columns:1fr 1fr}.topline{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="goat">🐐</div><div class="brandtext"><b>МандроКоза</b><small>Мандруй цікавіше</small></div></div>
+    <nav class="nav">
+      <button class="active" data-view="mapview"><span class="navicon">⌖</span><span class="label">Карта й маршрути</span></button>
+      <button data-view="memesview"><span class="navicon">☺</span><span class="label">Меми з козами</span></button>
+      <button data-view="savedview"><span class="navicon">♡</span><span class="label">Збережене</span></button>
+    </nav>
+    <div class="sidebar-note"><strong>🐐 Порада від Кози</strong>Не шукай просто дорогу — шукай історії, краєвиди й місця, які захочеться запам’ятати.</div>
+    <div class="profile-mini"><div class="avatar">🐐</div><div class="profiletext"><b style="font-size:12px">Мандрівник</b><small>Дослідник міста</small></div></div>
+  </aside>
+  <main>
+    <section id="mapview">
+      <div class="topline"><div><div class="eyebrow">Твоя наступна пригода</div><h1>Куди помандруємо?</h1></div><div class="top-actions"><button class="ghost" id="surpriseBtn">🎲 Здивуй мене</button><button class="primary" id="buildBtn">＋ Мій маршрут</button></div></div>
+      <div class="searchrow"><label class="search">⌕ <input id="searchInput" placeholder="Місто, пам’ятка або настрій подорожі…" /></label><button class="ghost" id="searchBtn">Знайти</button></div>
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="all">✨ Усе цікаве</button><button class="filter" data-filter="history">🏛 Історія</button><button class="filter" data-filter="view">🌅 Краєвиди</button><button class="filter" data-filter="food">☕ Їжа й кава</button><button class="filter" data-filter="hidden">🧭 Незвичне</button>
+      </div>
+      <div class="content-grid">
+        <div class="map-card"><div class="map-top"><div class="map-pill">📍 <span>Одеса, Україна</span></div><div class="map-pill">Маршрут: <span id="mapCount">4 місця</span></div></div><div id="map"></div><div class="map-legend"><div><i class="dot"></i>Цікаві місця</div><div>🔵 Лінія — прогулянка</div><div>🧭 Натисни на позначку</div></div></div>
+        <div class="sidepanel">
+          <div class="routeintro"><small>РЕКОМЕНДАЦІЯ ДНЯ</small><h2 id="routeTitle">Одеса: класика й секрети</h2><p id="routeDesc">Від знаменитих сходів до затишних вуличок — маршрут із місцями, які варто побачити.</p><div class="route-meta"><span>◷ 2–3 год</span><span>↗ 4,2 км</span><span>★ 4.9</span></div></div>
+          <div class="card"><div class="cardhead"><h2>Місця на маршруті</h2><span class="tag">4 зупинки</span></div><div class="place-list" id="placeList"></div><div class="route-footer"><button class="primary" id="startRoute">▶ Почати прогулянку</button><button class="ghost" id="saveRoute">♡</button></div></div>
+          <div class="bottom-hint">🌿 <span><b>Мандруй відповідально.</b> Обирай піші маршрути, поважай історичні місця та перевіряй доступність локацій перед візитом.</span></div>
+        </div>
+      </div>
+    </section>
+    <section id="memesview" class="memes">
+      <div class="topline"><div><div class="eyebrow">Перерва між пригодами</div><h1>Меми з козами 🐐</h1></div><button class="primary" id="newMeme">＋ Додати мем</button></div>
+      <p style="color:#8291a0;font-size:13px;margin-top:-8px">Трохи гумору для тих, хто завжди готовий звернути з маршруту заради пригод.</p>
+      <div class="memes-grid">
+        <article class="meme"><div class="emoji">🐐🗺️</div><b>«Я знаю короткий шлях»</b><p>Коза через 40 хвилин: ми вже в іншому районі.</p></article>
+        <article class="meme"><div class="emoji">🐐📸</div><b>«Ще одне фото»</b><p>Коли краєвид красивий, а пам’ять телефону — ні.</p></article>
+        <article class="meme"><div class="emoji">🐐☕</div><b>«Перерва на каву»</b><p>Маршрут може почекати. Кава — ні.</p></article>
+        <article class="meme"><div class="emoji">🐐🥾</div><b>«Пішки? Звісно!»</b><p>Я після першого кілометра, але з характером.</p></article>
+        <article class="meme"><div class="emoji">🐐🏛️</div><b>«Прийшов за мемами»</b><p>Залишився, бо дізнався історію міста.</p></article>
+        <article class="meme"><div class="emoji">🐐🌍</div><b>«Наступна зупинка»</b><p>Спочатку Одеса, а далі — куди заведе цікавість.</p></article>
+      </div>
+    </section>
+    <section id="savedview" class="memes">
+      <div class="topline"><div><div class="eyebrow">Твої знахідки</div><h1>Збережене ♡</h1></div></div>
+      <div class="card"><div class="cardhead"><h2>Збережені місця й маршрути</h2><span class="tag" id="savedCount">0 збережено</span></div><div id="savedList" style="font-size:12px;color:#8291a0">Натисни ♡ біля маршруту, щоб зберегти його тут.</div></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const places = [
+ {id:1,name:"Потьомкінські сходи",type:"history",emoji:"🏛️",desc:"Символ Одеси з краєвидом на порт.",time:"15 хв",lat:46.4906,lng:30.7408, note:"Історія"},
+ {id:2,name:"Приморський бульвар",type:"view",emoji:"🌊",desc:"Морське повітря, архітектура й прогулянка.",time:"20 хв",lat:46.4918,lng:30.7417,note:"Краєвид"},
+ {id:3,name:"Одеський оперний театр",type:"history",emoji:"🎭",desc:"Велична архітектура та культурна перлина.",time:"25 хв",lat:46.4852,lng:30.7412,note:"Архітектура"},
+ {id:4,name:"Вулиця Дерибасівська",type:"food",emoji:"☕",desc:"Кав’ярні, пішохідна вулиця й міський ритм.",time:"30 хв",lat:46.4837,lng:30.7351,note:"Міське життя"},
+ {id:5,name:"Воронцовська колонада",type:"view",emoji:"🌅",desc:"Тиха точка для фото та панорами.",time:"18 хв",lat:46.4924,lng:30.7389,note:"Панорама"},
+ {id:6,name:"Двір із одеським настроєм",type:"hidden",emoji:"🧭",desc:"Зверни з головної вулиці й шукай міські деталі.",time:"12 хв",lat:46.4818,lng:30.7298,note:"Незвичне"}
+];
+// Correct longitude typo in first entry (kept separate to make demo data easy to edit)
+
+</script>
+
+<script>
+const map = L.map('map',{zoomControl:false}).setView([46.4875,30.7385],14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:19}).addTo(map);
+L.control.zoom({position:'bottomright'}).addTo(map);
+let activeFilter='all', markers=[], saved=false;
+const routeLine = L.polyline(places.slice(0,4).map(p=>[p.lat,p.lng]),{color:'#557cf6',weight:4,opacity:.85,dashArray:'8 8'}).addTo(map);
+function pinIcon(n){return L.divIcon({className:'',html:`<div class="custom-pin">${n}</div>`,iconSize:[29,29],iconAnchor:[14,14]})}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
+function renderPlaces(){
+ const query=document.getElementById('searchInput').value.trim().toLowerCase();
+ const shown=places.filter(p=>(activeFilter==='all'||p.type===activeFilter)&&(!query||(p.name+' '+p.desc+' '+p.note).toLowerCase().includes(query)));
+ document.getElementById('placeList').innerHTML=shown.slice(0,4).map(p=>`<div class="place" data-id="${p.id}"><div class="place-art">${p.emoji}</div><div><h3>${p.name}</h3><p>${p.desc}</p></div><div class="time">${p.time}</div></div>`).join('') || '<p style="font-size:11px;color:#8291a0">Нічого не знайдено. Спробуй інший запит.</p>';
+ document.getElementById('mapCount').textContent=shown.length+' місць';
+ document.querySelectorAll('.place').forEach(el=>el.addEventListener('click',()=>focusPlace(Number(el.dataset.id))));
+ markers.forEach(m=>map.removeLayer(m));markers=[];
+ shown.forEach((p,i)=>{const m=L.marker([p.lat,p.lng],{icon:pinIcon(i+1)}).addTo(map).bindPopup(`<b>${p.name}</b><br>${p.desc}<br><br><button onclick="window.addPlace(${p.id})" style="background:#557cf6;color:white;border:0;border-radius:8px;padding:7px 10px">Додати до маршруту</button>`);markers.push(m)});
+ routeLine.setLatLngs(shown.slice(0,4).map(p=>[p.lat,p.lng]));
+ if(shown.length) { const bounds=L.latLngBounds(shown.map(p=>[p.lat,p.lng])); map.fitBounds(bounds.pad(.23),{animate:false}); }
+}
+function focusPlace(id){const p=places.find(x=>x.id===id);if(!p)return;map.setView([p.lat,p.lng],16);const m=markers.find((m,i)=>{const ll=m.getLatLng();return Math.abs(ll.lat-p.lat)<.0001&&Math.abs(ll.lng-p.lng)<.0001});if(m)m.openPopup();showToast('Відкрито: '+p.name)}
+window.addPlace=(id)=>{const p=places.find(x=>x.id===id);showToast('Додано до маршруту: '+p.name)};
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;renderPlaces()}));
+document.getElementById('searchBtn').addEventListener('click',renderPlaces);
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')renderPlaces()});
+document.getElementById('surpriseBtn').addEventListener('click',()=>{const p=places[Math.floor(Math.random()*places.length)];document.getElementById('searchInput').value='';activeFilter='all';document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.filter==='all'));renderPlaces();setTimeout(()=>focusPlace(p.id),100);showToast('Коза радить: '+p.name)});
+document.getElementById('buildBtn').addEventListener('click',()=>showToast('Маршрут готовий до налаштування — обери місця на карті!'));
+document.getElementById('startRoute').addEventListener('click',()=>showToast('Демо-режим: маршрут «Одеса: класика й секрети» розпочато!'));
+document.getElementById('saveRoute').addEventListener('click',e=>{saved=!saved;e.currentTarget.textContent=saved?'♥':'♡';document.getElementById('savedCount').textContent=saved?'1 збережено':'0 збережено';document.getElementById('savedList').innerHTML=saved?'<div class="place"><div class="place-art">🗺️</div><div><h3>Одеса: класика й секрети</h3><p>4 зупинки · 4,2 км · 2–3 год</p></div><div class="time">♥</div></div>':'Натисни ♡ біля маршруту, щоб зберегти його тут.';showToast(saved?'Маршрут збережено':'Маршрут видалено зі збереженого')});
+document.getElementById('newMeme').addEventListener('click',()=>showToast('У повній версії тут можна буде завантажити мем 🐐'));
+document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===btn));
+ ['mapview','memesview','savedview'].forEach(id=>document.getElementById(id).style.display=id===btn.dataset.view?'block':'none');
+ if(btn.dataset.view==='mapview')setTimeout(()=>map.invalidateSize(),100);
+}));
+renderPlaces();
+</script>
+</body>
+</html>
